@@ -1,40 +1,27 @@
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.By;
 
-import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 public class DashboardPage {
     private SelenideElement form = $(By.className("App_appContainer__3jRx1"));
-    private SelenideElement heading = form.$("[data-test-id = dashboard]");
     private SelenideElement blockFirstCard = form.$("[data-test-id='92df3f1c-a033-48e6-8390-206f6b1f56c0']");
     private SelenideElement firstCardButton = blockFirstCard.$("[data-test-id = action-deposit]");
     private SelenideElement blockSecondCard = form.$("[data-test-id='0f3f5c2a-249e-4c3d-8287-09f7a039391d']");
     private SelenideElement secondCardButton = blockSecondCard.$("[data-test-id = action-deposit]");
-    private SelenideElement reloadButton = form.$("[data-test-id = action-reload]");
     private SelenideElement errorNotification = form.$("[data-test-id = error-notification]");
     private static SelenideElement fieldTransactionAmount = $("[data-test-id = amount] input");
     private SelenideElement fieldCardNumberFrom = form.$("[data-test-id = from] input");
-    private SelenideElement fieldCardNumberTo = form.$("[data-test-id = to] input");
     private SelenideElement transferActionButton = form.$("[data-test-id = action-transfer]");
-    private SelenideElement transferCancelButton = form.$("[data-test-id = action-cancel]");
-
 
     public DashboardPage() {
     }
 
-    public static void validAmountInput() {
-        fieldTransactionAmount.setValue(DataHelper.Amount.getAmount());
-
+    public static void validAmountInput(String amount) {
+        fieldTransactionAmount.setValue(DataHelper.Amount.getAmount(amount));
     }
 
-    public void toBigAmountInput() {
-        BalanceCalculator balanceCalculator = new BalanceCalculator();
-        fieldTransactionAmount.setValue(balanceCalculator.getToBigAmount());
-
-    }
 
     public void cardNumberInput(DataHelper.NumberCard number) {
         fieldCardNumberFrom.setValue(number.getCardNumber());
@@ -52,45 +39,26 @@ public class DashboardPage {
         transferActionButton.click();
     }
 
-    public void errorMessageCheck() {errorNotification.shouldBe(visible);}
-
-
-    public static class BalanceCalculator {
-
-        int firstBalance = DataHelper.StartBalance.getStartBalance();
-        int amount = Integer.parseInt(DataHelper.Amount.getAmount());
-        int balanceFrom = firstBalance - amount;
-        String stringBalanceFrom = Integer.toString(balanceFrom);
-        int balanceTo = firstBalance + amount;
-        String stringBalanceTo = Integer.toString(balanceTo);
-        int toBigAmount = firstBalance + 1;
-        String stringToBigAmount = Integer.toString(toBigAmount);
-
-        public String getBalanceFrom() {
-            return stringBalanceFrom;
-        }
-
-        public String getBalanceTo() {
-            return stringBalanceTo;
-        }
-
-        public String getToBigAmount() {
-            return stringToBigAmount;
-        }
-
-    }
-
-    public void FirstCheckCardBalance() {
-        BalanceCalculator balanceCalculator = new BalanceCalculator();
-        blockFirstCard.shouldHave(exactText("**** **** **** 0001" + ", баланс: " + balanceCalculator.getBalanceTo() + " р. " + "Пополнить"));
-        blockSecondCard.shouldHave(exactText("**** **** **** 0002" + ", баланс: " + balanceCalculator.getBalanceFrom() + " р. " + "Пополнить"));
+    public void errorMessageCheck() {
+        errorNotification.shouldBe(visible);
     }
 
 
+    public static class CurrentBalance {
+        private static SelenideElement form = $(By.className("App_appContainer__3jRx1"));
+        private static SelenideElement blockFirstCard = form.$("[data-test-id='92df3f1c-a033-48e6-8390-206f6b1f56c0']");
+        private static SelenideElement blockSecondCard = form.$("[data-test-id='0f3f5c2a-249e-4c3d-8287-09f7a039391d']");
 
-    public void ReturnCheckCardBalance() {
-       String firstBalance = Integer.toString(DataHelper.StartBalance.getStartBalance());
-        blockFirstCard.shouldHave(exactText("**** **** **** 0001" + ", баланс: " + firstBalance + " р. " + "Пополнить"));
-        blockSecondCard.shouldHave(exactText("**** **** **** 0002" + ", баланс: " + firstBalance + " р. " + "Пополнить"));
+        public static int GetFirstCardBalance() {
+            String firstCardBalanceStr = blockFirstCard.text();
+            int firstCardBalance = Integer.parseInt(firstCardBalanceStr.substring(29, firstCardBalanceStr.length() - 13).trim());
+            return firstCardBalance;
+        }
+
+        public static int GetSecondCardBalance() {
+            String secondCardBalanceStr = blockSecondCard.text();
+            int secondCardBalance = Integer.parseInt(secondCardBalanceStr.substring(29, secondCardBalanceStr.length() - 13).trim());
+            return secondCardBalance;
+        }
     }
 }

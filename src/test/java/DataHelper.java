@@ -1,10 +1,8 @@
-
-
 public class DataHelper {
-    private DataHelper() {}
+    private DataHelper() {
+    }
 
-
-public static class AuthInfo {
+    public static class AuthInfo {
         public String login;
         public String password;
 
@@ -26,7 +24,6 @@ public static class AuthInfo {
         return new AuthInfo("vasya", "qwerty123");
     }
 
-
     public static class VerificationCode {
         public String code;
 
@@ -43,11 +40,10 @@ public static class AuthInfo {
         return new VerificationCode("12345");
     }
 
-
     public static class NumberCard {
         public String cardNumber;
 
-        public NumberCard (String cardNumber) {
+        public NumberCard(String cardNumber) {
             this.cardNumber = cardNumber;
         }
 
@@ -67,32 +63,18 @@ public static class AuthInfo {
     public static class Amount {
         public static String amount;
 
-        public Amount (String amount) {
+        public Amount(String amount) {
             this.amount = amount;
         }
 
-        public static String getAmount() {
-            amount = "100";
+        public static String getAmount(String amount) {
             return amount;
         }
     }
+}
 
-
-
-    public static class StartBalance {
-        public static int balance;
-
-        public StartBalance (int balance) {
-            this.balance = balance;
-        }
-
-        public static int getStartBalance() {
-            balance = 10000;
-            return balance;
-        }
-    }
 
     
 
 
-}
+
